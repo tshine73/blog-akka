@@ -1,4 +1,6 @@
-activator-akka-scala-seed
-=========================
+blog api
+========================
 
-A minimal seed template for an Akka with Scala build 
+implement with akka-http
+
+development stage, incomplete
