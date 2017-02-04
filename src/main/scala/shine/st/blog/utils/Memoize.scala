@@ -21,7 +21,10 @@ class Memoize[-T, +R](f: T => R) extends (T => R) {
 object Memoize {
   def memoize[T, R](f: T => R): Memoize[T, R] = new Memoize(f)
 
-  def memoize[T1, T2, R](f: (T1, T2) => R): (T1, T2) => R = Function.untupled(memoize(f.tupled))
+  //  def memoize[T1, T2, R](f: (T1, T2) => R): (T1, T2) => R = Function.untupled(memoize(f.tupled))
+
+  //  FIXME: can untupled and update
+  def memoize[T1, T2, R](f: (T1, T2) => R): Memoize[(T1, T2), R] = memoize(f.tupled)
 
   def memoize[T1, T2, T3, R](f: (T1, T2, T3) => R): (T1, T2, T3) => R = Function.untupled(memoize(f.tupled))
 }

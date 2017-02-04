@@ -2,7 +2,6 @@ package shine.st.blog.dao
 
 import com.typesafe.config.ConfigFactory
 import org.mongodb.scala.bson._
-import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.{Document, MongoCollection}
 import shine.st.blog.utils.MongoUtils
 
@@ -17,7 +16,7 @@ trait CollectionDao {
   lazy val collection: MongoCollection[Document] = MongoUtils.getCollection(config.getString("db.name"), collectionName)
 
 
-  def find(filter: conversions.Bson) = {
+  protected[dao] def find(filter: conversions.Bson) = {
     collection.find(filter)
   }
 

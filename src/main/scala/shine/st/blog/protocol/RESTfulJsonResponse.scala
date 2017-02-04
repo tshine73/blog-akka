@@ -16,7 +16,7 @@ sealed trait JsonResponse extends Exception {
 
   def message: String
 
-  def json = JsObject("returnCode" -> JsString(code), "message" -> JsString(message))
+  def json = JsObject("return_code" -> JsString(code), "message" -> JsString(message))
 }
 
 

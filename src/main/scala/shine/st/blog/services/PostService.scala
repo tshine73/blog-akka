@@ -27,8 +27,7 @@ object PostService {
   }
 
   def getPost(path: String) = {
-    println("get posts......")
-    Thread.sleep(3000)
-    PostCollectionDao.queryPost(path).map(PostService.transToPostDetailDo)
+    PostCollectionDao.findByPath(path).map(PostService.transToPostDetailDo)
   }
+
 }

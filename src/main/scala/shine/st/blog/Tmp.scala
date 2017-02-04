@@ -1,18 +1,11 @@
 package shine.st.blog
 
-import org.joda.time.DateTime
-import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import org.mongodb.scala.model.Filters.{and, equal}
-import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.{Document, MongoCollection}
-import shine.st.blog.api.bucketName
-import shine.st.blog.dao.PostCollectionDao
+import shine.st.blog.dao.{CategoriesCollectionDao, PostCollectionDao}
+import shine.st.blog.services.PagingService
 import shine.st.blog.utils.MongoUtils
-import shine.st.common.IOUtils
-import shine.st.common.aws.S3
-import shine.st.blog.utils.MongoUtils._
 
-import scalacache.Cache
 /**
   * Created by shinest on 16/01/2017.
   */
@@ -60,21 +53,18 @@ object Tmp {
     //    }
 
     //update brief
-//    val all = PostCollectionDao.queryAllPosts()
-//    for (post <- all) {
-//      val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
-//      val r = PostCollectionDao.collection.updateOne(equal("file", post.file), set("brief", content.split("\n").zipWithIndex.filter(_._2 <= 5).map(_._1).mkString))
-//      println(r.getHeadResult)
-//    }
+    //    val all = PostCollectionDao.queryAllPosts()
+    //    for (post <- all) {
+    //      val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
+    //      val r = PostCollectionDao.collection.updateOne(equal("file", post.file), set("brief", content.split("\n").zipWithIndex.filter(_._2 <= 5).map(_._1).mkString))
+    //      println(r.getHeadResult)
+    //    }
     // update brief end
 
-//    val parserISO: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis()
-//    val now = new DateTime()
-//    println(now)
-//    println(parserISO.print(now))
-
-
-
+    //    val parserISO: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis()
+    //    val now = new DateTime()
+    //    println(now)
+    //    println(parserISO.print(now))
 
 
     //    val r = Await.result(post, Duration(10, TimeUnit.SECONDS))
@@ -93,7 +83,11 @@ object Tmp {
     //    val post = jsonAst.convertTo[Post]
     //    println(post)
 
-    val now = new DateTime
-    println(now.isBefore(now.getMillis -1))
+    val result1 = PagingService.categoryPaging("scala", 1)
+//    println("finish")
+//    val allCategories = CategoriesCollectionDao.findByAncestors("scala").toList
+//
+//    val result = PostCollectionDao.findByCategoryId(allCategories.map(_._id)).toList
+    println(result1)
   }
 }

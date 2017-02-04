@@ -1,6 +1,6 @@
 package shine.st.blog.dao
 
-import org.mongodb.scala.model.Filters.{and, equal}
+import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.{Document, Observable}
 import shine.st.blog.protocol.document.Categories
 import shine.st.blog.utils.MongoUtils.ImplicitObservable
@@ -12,8 +12,6 @@ import spray.json._
 trait CategoriesCollectionDao extends CollectionDao {
   override val collectionName: String = "categories"
 
-//  val mainCondition = and(equal("address.zipcode", "10075"), equal("address.street", "133 Avenue"))
-
   implicit class CategoriesObservable(val observable: Observable[Document]) extends ImplicitObservable[Document] {
     type R = Categories
     override val converter: (Document) => R = (doc) => {
@@ -23,8 +21,12 @@ trait CategoriesCollectionDao extends CollectionDao {
     }
   }
 
-  def queryCategory(id: String) = {
+  def findById(id: String) = {
     find(equal("_id", id)).getHeadResult
+  }
+
+  def findByAncestors(someAncestor: String) = {
+    find(equal("ancestors", someAncestor)).getResults
   }
 
 }

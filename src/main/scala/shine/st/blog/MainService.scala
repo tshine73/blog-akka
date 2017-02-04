@@ -34,6 +34,7 @@ object MainService extends App {
     case e: Exception =>
       extractUri { uri =>
         println(s"Request to $uri could not be handled normally")
+        e.printStackTrace
         val err = UnknownError(s"Something wrong...${e.getMessage}")
         complete(HttpResponse(InternalServerError, entity = err.json.prettyPrint))
       }

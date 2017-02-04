@@ -12,4 +12,6 @@ package object api {
   val updatePeriod = config.getInt("blog.update_period")
 
   def isExpire(date: DateTime) = DateTime.now.isAfter(date.plusDays(updatePeriod).getMillis)
+
+  //  def isExpire(date: DateTime) = DateTime.now.isAfter(date.plusSeconds(10).getMillis)
 }

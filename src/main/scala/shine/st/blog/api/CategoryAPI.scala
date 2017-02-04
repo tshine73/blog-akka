@@ -1,12 +1,12 @@
 package shine.st.blog.api
 
-import akka.http.scaladsl.server.Directives.{complete, get, path, pathPrefix, _}
-import akka.http.scaladsl.server.PathMatchers.Segment
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.server.Directives.{complete, get, pathPrefix, _}
 import akka.http.scaladsl.server.Route
 import shine.st.blog.dao.PostCollectionDao
 import shine.st.blog.protocol.doObj.CategoriesDo
-import shine.st.blog.services.CategoriesService
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import shine.st.blog.services.{CategoriesService, PagingService}
+import shine.st.blog.utils.Memoize
 
 /**
   * Created by shinest on 16/01/2017.
@@ -14,26 +14,29 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 
 
 object CategoryAPI extends BaseAPI {
+  val categoryMemo = Memoize.memoize(PagingService.categoryPaging _)
+
   override def route: Route = {
     pathPrefix("categories") {
       get {
-        complete {
-          count()
-        }
+        pathEndOrSingleSlash {
+          complete {
+            count()
+          }
+        } ~
+          path(Segment / IntNumber) {
+            (categoryName, page) =>
+              complete {
+                memoProcess(categoryMemo, (categoryName, page))
+              }
+          }
       }
-//      ~
-//        (get & path(Segment)) {
-//          categoryName =>
-//            complete {
-//              getPostsByCategoryName(categoryName)
-//            }
-//        }
     }
   }
 
   def count() = {
     success(
-      PostCollectionDao.queryAllPosts
+      PostCollectionDao.findAll
         .flatMap(_.categoryId)
         .groupBy(id => id)
         .mapValues(_.size)
@@ -46,8 +49,15 @@ object CategoryAPI extends BaseAPI {
 
   }
 
-//  def getPostsByCategoryName(categoryName: String) = {
-//    success(Nil[CategoriesDo])
-//  }
+  //  def getPostsByCategoryName(categoryName: String, page: Int) = {
+  //    val categoryPosts =
+  //      if (isExpire(categoryMemo((categoryName, page)).queryAt)) {
+  //        println("specified category posts update...")
+  //        categoryMemo.update((categoryName, page))
+  //      } else
+  //        categoryMemo((categoryName, page))
+  //
+  //    success(categoryPosts)
+  //  }
 
 }

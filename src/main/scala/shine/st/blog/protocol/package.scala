@@ -65,14 +65,13 @@ package object protocol extends DefaultJsonProtocol {
   implicit val postFormat = jsonFormat(Post, "_id", "title", "path", "file", "create_at", "update_at", "category_id", "brief")
   implicit val categoriesFormat = jsonFormat6(Categories)
 
-  //  do
+  //  domain object
   implicit val seoFormat = jsonFormat1(Seo)
 
-  implicit val postMetaDoFormat = jsonFormat4(PostMetaDo)
-  implicit val postDetailDoFormat = jsonFormat4(PostDetailDo)
+  implicit val postMetaDoFormat = jsonFormat(PostMetaDo, "title", "create_at", "update_at", "brief_content")
+  implicit val postDetailDoFormat = jsonFormat(PostDetailDo, "post_meta_data", "content", "seo", "query_at")
 
-  implicit val pagingDoFormat = jsonFormat4(PagingDo)
-  implicit val categoriesDoFormat = jsonFormat4(CategoriesDo)
-
+  implicit val pagingDoFormat = jsonFormat(PagingDo, "page", "post_meta_list", "seo", "query_at")
+  implicit val categoriesDoFormat = jsonFormat(CategoriesDo, "display", "description", "post_count", "paging_data")
 
 }

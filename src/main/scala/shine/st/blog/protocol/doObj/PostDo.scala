@@ -9,7 +9,7 @@ object PostDo {
 
   case class PostMetaDo(title: String, createAt: DateTime, updateAt: Option[DateTime], briefContent: String)
 
-  case class PostDetailDo(postMetaDo: PostMetaDo, content: String, seo: Seo, queryAt: DateTime)
+  case class PostDetailDo(postMetaDo: PostMetaDo, content: String, seo: Seo, queryAt: DateTime) extends TimeLimitDo
 
 }
 

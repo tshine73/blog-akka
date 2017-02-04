@@ -8,4 +8,4 @@ import shine.st.blog.protocol.doObj.PostDo.PostMetaDo
   */
 
 
-case class PagingDo(page: Int, postMetaList: List[PostMetaDo], seo: Seo, queryAt: DateTime)
+case class PagingDo(page: Int, postMetaList: List[PostMetaDo], seo: Seo, queryAt: DateTime) extends TimeLimitDo
