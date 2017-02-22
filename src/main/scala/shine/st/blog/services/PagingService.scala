@@ -19,10 +19,6 @@ object PagingService {
     PagingDo(page, postMetaList, Seo(keywords), DateTime.now)
   }
 
-  def homePaging(page: Int) = {
-    val allPosts = PostCollectionDao.findAll.toList
-    postsPaging(allPosts, page)
-  }
 
   def categoryPaging(categoryName: String, page: Int) = {
     val allCategories = CategoriesCollectionDao.findByAncestors(categoryName).toList

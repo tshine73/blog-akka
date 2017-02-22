@@ -19,11 +19,11 @@ object PostService {
   def transToPostDetailDo(post: Post) = {
     val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
     val keywords = CategoriesService.findAllKeywords(post.categoryId)
-    PostDetailDo(PostMetaDo(post.title, post.createAt, post.updateAt, post.brief), content, Seo(keywords), new DateTime())
+    PostDetailDo(PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt, None), content, Seo(keywords), new DateTime())
   }
 
   def transToPostMetaDo(post: Post) = {
-    PostMetaDo(post.title, post.createAt, post.updateAt, post.brief)
+    PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt, Some(post.brief))
   }
 
   def getPost(path: String) = {

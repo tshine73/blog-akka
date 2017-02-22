@@ -1,11 +1,14 @@
 package shine.st.blog
 
-import org.mongodb.scala.model.Filters.{and, equal}
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.{Document, MongoCollection}
-import shine.st.blog.dao.{CategoriesCollectionDao, PostCollectionDao}
-import shine.st.blog.services.PagingService
+import shine.st.blog.api._
+import shine.st.blog.dao.PostCollectionDao
 import shine.st.blog.utils.MongoUtils
-
+import shine.st.common.IOUtils
+import shine.st.common.aws.S3
+import shine.st.blog.utils.MongoUtils._
 /**
   * Created by shinest on 16/01/2017.
   */
@@ -38,7 +41,7 @@ object Tmp {
         |      "restaurant_id" : "41704620"
         |   }""".stripMargin
 
-    val mainCondition = and(equal("address.zipcode", "10075"), equal("address.street", "133 Avenue"))
+    //    val mainCondition = and(equal("address.zipcode", "10075"), equal("address.street", "133 Avenue"))
     //
     //        collection.insertOne(Document(insertJson)).printHeadResult()
     //
@@ -53,12 +56,13 @@ object Tmp {
     //    }
 
     //update brief
-    //    val all = PostCollectionDao.queryAllPosts()
-    //    for (post <- all) {
-    //      val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
-    //      val r = PostCollectionDao.collection.updateOne(equal("file", post.file), set("brief", content.split("\n").zipWithIndex.filter(_._2 <= 5).map(_._1).mkString))
-    //      println(r.getHeadResult)
-    //    }
+    val all = PostCollectionDao.findAll()
+    for (post <- all) {
+      val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
+      println(content)
+      val r = PostCollectionDao.collection.updateOne(equal("file", post.file), set("brief", content.split("\n").zipWithIndex.filter(_._2 <= 5).map(_._1).mkString))
+      println(r.getHeadResult)
+    }
     // update brief end
 
     //    val parserISO: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis()
@@ -83,11 +87,22 @@ object Tmp {
     //    val post = jsonAst.convertTo[Post]
     //    println(post)
 
-    val result1 = PagingService.categoryPaging("scala", 1)
-//    println("finish")
-//    val allCategories = CategoriesCollectionDao.findByAncestors("scala").toList
-//
-//    val result = PostCollectionDao.findByCategoryId(allCategories.map(_._id)).toList
-    println(result1)
+    //    val result1 = PagingService.categoryPaging("scala", 1)
+    //    println("finish")
+    //    val allCategories = CategoriesCollectionDao.findByAncestors("scala").toList
+    //
+    //    val result = PostCollectionDao.findByCategoryId(allCategories.map(_._id)).toList
+    //    println(result1)
+
+    //    val test = '\t'.toString
+    //    println(test + "my name is steven >")
+    //    val escape = CharUtils.escape(test + "my name is steven >")
+    //    println(escape)
+    val es =
+    """Hello\tworld\nmy name&nbsp;is \"ABC\""""
+    val un = StringContext treatEscapes es
+    println(es)
+    println(un)
+    //    println(StringEscapeUtils.unescapeHtml4(es))
   }
 }
