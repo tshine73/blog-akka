@@ -25,3 +25,5 @@ libraryDependencies ++= Seq(
 libraryDependencies += "shine.st" %% "common" % "1.0.3"
 
 resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
+
+enablePlugins(JavaAppPackaging)
