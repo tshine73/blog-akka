@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
 
 
 
-libraryDependencies += "shine.st" %% "common" % "1.0.3"
+libraryDependencies += "shine.st" %% "common" % "2.0.0"
 
 resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
 
