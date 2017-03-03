@@ -7,8 +7,8 @@ import shine.st.blog.dao.PostCollectionDao
 import shine.st.blog.protocol.doObj.PostDo.{PostDetailDo, PostMetaDo}
 import shine.st.blog.protocol.doObj.Seo
 import shine.st.blog.protocol.document.Post
-import shine.st.common.IOUtils
 import shine.st.common.aws.S3
+import shine.st.common.{DateTimeUtils, IOUtils}
 
 /**
   * Created by shinest on 23/01/2017.
@@ -16,14 +16,19 @@ import shine.st.common.aws.S3
 object PostService {
   implicit val executor = MainService.executor
 
+  implicit def format(dateTime: DateTime) = {
+    DateTimeUtils.format(dateTime)(DateTimeUtils.DATE_HOUR_PATTERN)
+  }
+
+
   def transToPostDetailDo(post: Post) = {
     val content = IOUtils.inputStreamToString(S3.getObjectContent(bucketName, post.file))
     val keywords = CategoriesService.findAllKeywords(post.categoryId)
-    PostDetailDo(PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt, None), content, Seo(keywords), new DateTime())
+    PostDetailDo(PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt.map(format), None), content, Seo(keywords), new DateTime())
   }
 
   def transToPostMetaDo(post: Post) = {
-    PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt, Some(post.brief))
+    PostMetaDo(post.title, post.path, post.subtitle, post.createAt, post.updateAt.map(format), Some(post.brief))
   }
 
   def getPost(path: String) = {

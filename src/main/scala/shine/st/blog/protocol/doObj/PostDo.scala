@@ -7,7 +7,7 @@ import org.joda.time.DateTime
   */
 object PostDo {
 
-  case class PostMetaDo(title: String, path: String, subtitle: String, createAt: DateTime, updateAt: Option[DateTime], briefContent: Option[String])
+  case class PostMetaDo(title: String, path: String, subtitle: String, createAt: String, updateAt: Option[String], briefContent: Option[String])
 
   case class PostDetailDo(postMetaDo: PostMetaDo, content: String, seo: Seo, queryAt: DateTime) extends TimeLimitDo
 

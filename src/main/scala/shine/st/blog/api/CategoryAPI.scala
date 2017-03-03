@@ -17,19 +17,21 @@ object CategoryAPI extends BaseAPI {
   val categoryMemo = Memoize.memoize(PagingService.categoryPaging _)
 
   override def route: Route = {
-    pathPrefix("categories") {
-      get {
-        pathEndOrSingleSlash {
-          complete {
-            count()
-          }
-        } ~
-          path(Segment / IntNumber) {
-            (categoryName, page) =>
-              complete {
-                memoProcess(categoryMemo, (categoryName, page))
-              }
-          }
+    parameter('update ? false) { update =>
+      pathPrefix("categories") {
+        get {
+          pathEndOrSingleSlash {
+            complete {
+              count()
+            }
+          } ~
+            path(Segment / IntNumber) {
+              (categoryName, page) =>
+                complete {
+                  memoProcess(categoryMemo, (categoryName, page), update)
+                }
+            }
+        }
       }
     }
   }

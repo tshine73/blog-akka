@@ -17,12 +17,14 @@ object PostAPI extends BaseAPI {
   val postMemo = Memoize.memoize(PostService.getPost _)
 
   override def route: Route = {
-    pathPrefix("post") {
-      (get & path(Segment)) {
-        postPath =>
-          complete {
-            getPost(postPath)
-          }
+    parameter('update ? false) { update =>
+      pathPrefix("post") {
+        (get & path(Segment)) {
+          postPath =>
+            complete {
+              getPost(postPath, update)
+            }
+        }
       }
     }
   }
@@ -33,15 +35,22 @@ object PostAPI extends BaseAPI {
   //    }.fallbackTo(Future(fail[PostDetailDo](NoData("no post data"))))
   //  }
 
-  def getPost(path: String): Future[RESTfulResponse[PostDetailDo]] = {
-    val post = postMemo(path).flatMap { p =>
-      if (isExpire(p.queryAt)) {
-        println("path info update...")
+  def getPost(path: String, update: Boolean): Future[RESTfulResponse[PostDetailDo]] = {
+    val post = {
+      if (update) {
         postMemo.update(path)
       }
-      else
-        postMemo(path)
+      else {
+        postMemo(path).flatMap { p =>
+          if (isExpire(p.queryAt)) {
+            postMemo.update(path)
+          }
+          else
+            postMemo(path)
+        }
+      }
     }
+
 
     futureSuccess(post)(NoData("no post data"))
   }

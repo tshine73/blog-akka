@@ -14,19 +14,22 @@ object HomeAPI extends BaseAPI {
   val aboutMemo = Memoize.memoize(HomeService.about _)
 
   override def route: Route = {
-    pathPrefix("home") {
-      (get & path(IntNumber)) {
-        page =>
-          complete {
-            memoProcess(homeMemo, page)
-          }
-      }
-    } ~ pathPrefix("about") {
-      (get & path(Segment)) {
-        (typeName) =>
-          complete {
-            memoProcess(aboutMemo, typeName)
-          }
+    parameter('update ? false) { update =>
+      pathPrefix("home") {
+        (get & path(IntNumber)) {
+          page =>
+            println(update)
+            complete {
+              memoProcess(homeMemo, page, update)
+            }
+        }
+      } ~ pathPrefix("about") {
+        (get & path(Segment)) {
+          (typeName) =>
+            complete {
+              memoProcess(aboutMemo, typeName, update)
+            }
+        }
       }
     }
   }

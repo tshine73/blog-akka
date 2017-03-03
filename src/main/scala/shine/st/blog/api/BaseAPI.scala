@@ -24,12 +24,13 @@ trait BaseAPI {
 
   def errorHandle(jsonResponse: JsonResponse) = JsonHandler.handle(jsonResponse)
 
-  def memoProcess[T, R <: TimeLimitDo](memo: Memoize[T, R], key: T): RESTfulResponse[R] = {
-    val dataDo = if (isExpire(memo(key).queryAt)) {
-      println("memo update...")
-      memo.update(key)
-    } else
-      memo(key)
+  def memoProcess[T, R <: TimeLimitDo](memo: Memoize[T, R], key: T, update: Boolean): RESTfulResponse[R] = {
+    val dataDo = {
+      if (update || isExpire(memo(key).queryAt)) {
+        memo.update(key)
+      } else
+        memo(key)
+    }
 
     success(dataDo)
   }
