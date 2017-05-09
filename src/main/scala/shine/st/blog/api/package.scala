@@ -10,6 +10,7 @@ package object api {
   val config = ConfigFactory.load()
   val bucketName = config.getString("blog.bucket_name")
   val updatePeriod = config.getInt("blog.update_period")
+  val tokenKey = config.getString("token_key")
 
   def isExpire(date: DateTime) = DateTime.now.isAfter(date.plusDays(updatePeriod).getMillis)
 

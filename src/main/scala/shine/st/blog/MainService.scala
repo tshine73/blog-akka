@@ -4,19 +4,22 @@ import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.coding.Gzip
-import akka.http.scaladsl.model.StatusCodes.{BadRequest, InternalServerError}
+import akka.http.scaladsl.marshalling.ToResponseMarshallable._
+import akka.http.scaladsl.model.StatusCodes.{BadRequest, InternalServerError, _}
 import akka.http.scaladsl.model.headers.HttpOriginRange.*
 import akka.http.scaladsl.model.{HttpResponse, headers}
 import akka.http.scaladsl.server.Directives.{complete, encodeResponseWith, extractUri, handleExceptions, respondWithHeaders, _}
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import shine.st.blog.api.{CategoryAPI, HomeAPI, PostAPI}
+import shine.st.blog.api.{BackendAPI, CategoryAPI, HomeAPI, PostAPI}
 import shine.st.blog.protocol.{JsonResponse, UnknownError}
 
 /**
   * Created by shinest on 16/01/2017.
   */
+
+
 object MainService extends App {
 
   implicit val system = ActorSystem()
@@ -59,12 +62,38 @@ object MainService extends App {
   val config = ConfigFactory.load()
   val logger = Logging(system, getClass)
 
+  val frontRoute = HomeAPI.route ~ PostAPI.route ~ CategoryAPI.route
+  val backendRoute = pathPrefix("backend") {
+    BackendAPI.route
+  }
+
   val allRoute: Route = handleExceptions(exceptionHandler) {
     (encodeResponseWith(Gzip) & respondWithHeaders(commonHeaders)) {
-      HomeAPI.route ~ PostAPI.route ~ CategoryAPI.route
+      frontRoute ~ backendRoute
     }
   }
 
+  def myRejectionHandler: RejectionHandler =
+    RejectionHandler.newBuilder()
+      .handle { case MissingCookieRejection(cookieName) =>
+        complete(HttpResponse(BadRequest, entity = "No cookies, no service!!!"))
+      }
+      //      .handle { case AuthorizationFailedRejection =>
+      //        complete((Forbidden, "You're out of your depth!"))
+      //      }
+      .handle { case ValidationRejection(msg, _) =>
+      complete((InternalServerError, "That wasn't valid! " + msg))
+    }
+      .handleAll[MethodRejection] { methodRejections =>
+      val names = methodRejections.map(_.supported.name)
+      complete((MethodNotAllowed, s"Can't do that! Supported: ${names mkString " or "}!"))
+    }
+      .handleNotFound {
+        complete((NotFound, "Not here!"))
+      }
+      .result()
+
   Http().bindAndHandle(allRoute, config.getString("http.interface"), config.getInt("http.port"))
+
 
 }

@@ -2,7 +2,7 @@ package shine.st.blog.api
 
 import akka.http.scaladsl.server.Route
 import shine.st.blog.MainService
-import shine.st.blog.protocol.doObj.TimeLimitDo
+import shine.st.blog.protocol.do_obj.TimeLimitDo
 import shine.st.blog.protocol.{JsonHandler, JsonResponse, RESTfulResponse, Success, UnknownError}
 import shine.st.blog.utils.Memoize
 
@@ -16,7 +16,7 @@ trait BaseAPI {
 
   def route: Route
 
-  def success[T](t: T) = RESTfulResponse[T](Success, Option(t))
+  def success[T](t: T): RESTfulResponse[T] = RESTfulResponse[T](Success, Option(t))
 
   def fail[T](jsonResponse: JsonResponse) = RESTfulResponse[T](jsonResponse, None)
 

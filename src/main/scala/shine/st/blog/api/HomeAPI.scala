@@ -18,7 +18,6 @@ object HomeAPI extends BaseAPI {
       pathPrefix("home") {
         (get & path(IntNumber)) {
           page =>
-            println(update)
             complete {
               memoProcess(homeMemo, page, update)
             }

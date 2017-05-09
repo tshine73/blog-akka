@@ -37,21 +37,12 @@ case class UnknownError(message: String) extends JsonResponse {
   override val code: String = "999"
 }
 
-case class InCompleteParam(message: String) extends JsonResponse {
-  override val code: String = "100"
-}
-
-case class DuplicateData(message: String) extends JsonResponse {
-  override val code: String = "102"
-}
-
-case object InvalidAccessToken extends JsonResponse {
+case class InvalidAccessToken(message: String) extends JsonResponse {
   override val code: String = "130"
-  override val message: String = "invalid access token"
 }
 
 case object AccessDenied extends JsonResponse {
   override val code: String = "102"
-  override val message: String = "accessToken incorrect"
+  override val message: String = "invalid login info"
 }
 

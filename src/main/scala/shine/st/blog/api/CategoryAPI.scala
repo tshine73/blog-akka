@@ -4,7 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives.{complete, get, pathPrefix, _}
 import akka.http.scaladsl.server.Route
 import shine.st.blog.dao.PostCollectionDao
-import shine.st.blog.protocol.doObj.CategoriesDo
+import shine.st.blog.protocol.do_obj.CategoriesDo
 import shine.st.blog.services.{CategoriesService, PagingService}
 import shine.st.blog.utils.Memoize
 
@@ -38,7 +38,7 @@ object CategoryAPI extends BaseAPI {
 
   def count() = {
     success(
-      PostCollectionDao.findAll
+      PostCollectionDao.all
         .flatMap(_.categoryId)
         .groupBy(id => id)
         .mapValues(_.size)

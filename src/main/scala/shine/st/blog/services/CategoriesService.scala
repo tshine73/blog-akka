@@ -8,8 +8,11 @@ import shine.st.blog.protocol.document.Categories
   */
 object CategoriesService {
   def findAllKeywords(categoryName: String): List[String] = {
-    val c = CategoriesCollectionDao.findById(categoryName)
-    c.keywords :: c.ancestors.flatMap(findAllKeywords)
+    CategoriesCollectionDao.findById(categoryName) match {
+      case Some(c) => c.keywords :: c.ancestors.flatMap(findAllKeywords)
+      case None => Nil
+    }
+
   }
 
   def findAllKeywords(categoryNameList: List[String]): List[String] = {
@@ -17,7 +20,7 @@ object CategoriesService {
   }
 
   def findGrandpa(categoryName: String): Categories = {
-    val c = CategoriesCollectionDao.findById(categoryName)
+    val c = CategoriesCollectionDao.findById(categoryName).get
     if (c.ancestors.isEmpty)
       c
     else

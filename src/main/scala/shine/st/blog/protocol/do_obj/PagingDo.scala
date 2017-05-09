@@ -1,7 +1,7 @@
-package shine.st.blog.protocol.doObj
+package shine.st.blog.protocol.do_obj
 
 import org.joda.time.DateTime
-import shine.st.blog.protocol.doObj.PostDo.PostMetaDo
+import shine.st.blog.protocol.do_obj.PostDo.PostMetaDo
 
 /**
   * Created by shinest on 25/01/2017.

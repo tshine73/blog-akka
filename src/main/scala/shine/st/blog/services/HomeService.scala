@@ -3,7 +3,7 @@ package shine.st.blog.services
 import org.joda.time.DateTime
 import shine.st.blog.api.{bucketName, config}
 import shine.st.blog.dao.PostCollectionDao
-import shine.st.blog.protocol.doObj.AboutDo
+import shine.st.blog.protocol.do_obj.AboutDo
 import shine.st.common.IOUtils
 import shine.st.common.aws.S3
 
@@ -12,9 +12,8 @@ import shine.st.common.aws.S3
   */
 object HomeService {
 
-
   def homePaging(page: Int) = {
-    val allPosts = PostCollectionDao.findAll.toList.sortWith {
+    val allPosts = PostCollectionDao.all.toList.sortWith {
       _.createAt.getMillis > _.createAt.getMillis
     }
 

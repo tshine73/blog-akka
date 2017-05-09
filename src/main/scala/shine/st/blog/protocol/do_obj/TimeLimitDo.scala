@@ -1,4 +1,4 @@
-package shine.st.blog.protocol.doObj
+package shine.st.blog.protocol.do_obj
 
 import org.joda.time.DateTime
 

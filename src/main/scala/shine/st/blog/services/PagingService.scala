@@ -3,7 +3,7 @@ package shine.st.blog.services
 import org.joda.time.DateTime
 import shine.st.blog.dao.{CategoriesCollectionDao, PostCollectionDao}
 import shine.st.blog.protocol.NoData
-import shine.st.blog.protocol.doObj.{PagingDo, Seo}
+import shine.st.blog.protocol.do_obj.{PagingDo, Seo}
 import shine.st.blog.protocol.document.Post
 
 /**

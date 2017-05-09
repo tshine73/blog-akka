@@ -1,4 +1,4 @@
-package shine.st.blog.protocol.doObj
+package shine.st.blog.protocol.do_obj
 
 /**
   * Created by shinest on 20/01/2017.

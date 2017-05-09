@@ -3,7 +3,7 @@ package shine.st.blog.api
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import shine.st.blog.protocol.doObj.PostDo.PostDetailDo
+import shine.st.blog.protocol.do_obj.PostDo.PostDetailDo
 import shine.st.blog.protocol.{NoData, RESTfulResponse}
 import shine.st.blog.services.PostService
 import shine.st.blog.utils.Memoize
@@ -14,7 +14,7 @@ import scala.concurrent.Future
   * Created by shinest on 16/01/2017.
   */
 object PostAPI extends BaseAPI {
-  val postMemo = Memoize.memoize(PostService.getPost _)
+  val postMemo = Memoize.memoize(PostService.getPostByPath _)
 
   override def route: Route = {
     parameter('update ? false) { update =>
@@ -50,7 +50,6 @@ object PostAPI extends BaseAPI {
         }
       }
     }
-
 
     futureSuccess(post)(NoData("no post data"))
   }

@@ -18,11 +18,10 @@ object MongoUtils {
 
   def getCollection(dbName: String, collectionName: String) = mongoClient.getDatabase(dbName).getCollection(collectionName)
 
-  implicit class DocumentObservable[C](val observable: Observable[Document]) extends ImplicitObservable[Document] {
-    type R = String
-    override val converter: (Document) => String = (doc) => doc.toJson
-
-  }
+//  implicit class DocumentObservable[C](val observable: Observable[Document]) extends ImplicitObservable[Document] {
+//    type R = String
+//    override val converter: (Document) => String = (doc) => doc.toJson
+//  }
 
   implicit class GenericObservable[C](val observable: Observable[C]) extends ImplicitObservable[C] {
     type R = String
@@ -57,7 +56,7 @@ object MongoUtils {
 
     //    def getHeadResult: R = converter(headResult())
 
-    def getHeadResult: R = awaitResult(headResult())
+    def getHeadResult: Option[R] = awaitResult(results()).headOption
 
     def getResults: Seq[R] = awaitResult(results())
 
