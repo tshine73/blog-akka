@@ -49,5 +49,5 @@ object PostService {
   def getAllPost() = {
     PostCollectionDao.all.map(transToPostMetaDo)
   }
-  
+
 }
