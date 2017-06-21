@@ -14,7 +14,6 @@ blog {
   update_period: 1440
 }
 
-
 about.me {
   title: "About me",
   file_name : "about_me.md.html"
@@ -24,5 +23,3 @@ about.resume {
   title: "Resume",
   file_name: "resume.md.html"
 }
-
-token_key = "shinesting"
