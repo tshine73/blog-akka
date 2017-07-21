@@ -2,7 +2,7 @@ name := """blog-akka"""
 
 version := "0.1.0"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 val akkaHttpVersion = "10.0.6"
 
@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
 )
 
 
-libraryDependencies += "shine.st" %% "common" % "2.0.1"
+libraryDependencies += "shine.st" %% "common" % "2.0.0"
 
 resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
 

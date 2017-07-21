@@ -3,12 +3,11 @@ package shine.st.blog
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.coding.Gzip
 import akka.http.scaladsl.marshalling.ToResponseMarshallable._
 import akka.http.scaladsl.model.StatusCodes.{BadRequest, InternalServerError, _}
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.HttpOriginRange.*
-import akka.http.scaladsl.model.{HttpResponse, headers}
-import akka.http.scaladsl.server.Directives.{complete, encodeResponseWith, extractUri, handleExceptions, respondWithHeaders, _}
+import akka.http.scaladsl.server.Directives.{complete, extractUri, handleExceptions, _}
 import akka.http.scaladsl.server.{Route, _}
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
@@ -20,7 +19,7 @@ import shine.st.blog.protocol.{JsonResponse, UnknownError}
   */
 
 
-object MainService extends App {
+object MainService extends App with CorsSupport {
 
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
@@ -31,7 +30,7 @@ object MainService extends App {
     case t: JsonResponse =>
       extractUri { uri =>
         println(s"Request to $uri could not be handled normally")
-        complete(HttpResponse(BadRequest, entity = t.json.prettyPrint))
+        complete(HttpResponse(BadRequest, entity = HttpEntity(ContentType(MediaTypes.`application/json`), t.json.compactPrint)))
       }
 
     case e: Exception =>
@@ -39,7 +38,7 @@ object MainService extends App {
         println(s"Request to $uri could not be handled normally")
         e.printStackTrace
         val err = UnknownError(s"Something wrong...${e.getMessage}")
-        complete(HttpResponse(InternalServerError, entity = err.json.prettyPrint))
+        complete(HttpResponse(InternalServerError, entity = HttpEntity(ContentType(MediaTypes.`application/json`), err.json.compactPrint)))
       }
   }
 
@@ -58,6 +57,8 @@ object MainService extends App {
   //    }
   //  }.result()
 
+  //  ->header('Access-Control-Allow-Headers', 'authorization,X-Requested-With,Content-Type')
+  //  ->header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE');
 
   val config = ConfigFactory.load()
   val logger = Logging(system, getClass)
@@ -67,11 +68,11 @@ object MainService extends App {
     BackendAPI.route
   }
 
-  val allRoute: Route = handleExceptions(exceptionHandler) {
-    (encodeResponseWith(Gzip) & respondWithHeaders(commonHeaders)) {
-      frontRoute ~ backendRoute
-    }
-  }
+  val apiRoute = frontRoute ~ backendRoute
+
+  val allRoute: Route = corsHandler(handleExceptions(exceptionHandler) {
+    apiRoute
+  })
 
   def myRejectionHandler: RejectionHandler =
     RejectionHandler.newBuilder()

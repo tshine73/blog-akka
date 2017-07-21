@@ -61,24 +61,34 @@ object BackendAPI extends BaseAPI with AuthenticationHandler {
               //    update has result, example: AcknowledgedUpdateResult{matchedCount=1, modifiedCount=1, upsertedId=null}
               val result = PostCollectionDao.updateOne("_id", new ObjectId(id), updatePost)
 
-              (postData.path != post.path, postData.md) match {
-                case (true, Some(md)) =>
-                  S3.putObject(bucketName, s"${postData.path}.md", md)
-                  S3.putObject(bucketName, newFileName, postData.content.get)
-                  S3.deleteObject(bucketName, s"${post.path}.md")
-                  S3.deleteObject(bucketName, post.file)
-                case (false, Some(md)) =>
-                  S3.putObject(bucketName, s"${postData.path}.md", md)
-                  S3.putObject(bucketName, newFileName, postData.content.get)
-                case (true, None) =>
-                  S3.copyObject(bucketName, s"${post.path}.md", s"${postData.path}.md")
-                  S3.copyObject(bucketName, post.file, newFileName)
-                  S3.deleteObject(bucketName, s"${post.path}.md")
-                  S3.deleteObject(bucketName, post.file)
-                case (false, None) =>
+              if (postData.path != post.path) {
+                S3.putObject(bucketName, s"${postData.path}.md", postData.md)
+                S3.putObject(bucketName, newFileName, postData.content)
+                S3.deleteObject(bucketName, s"${post.path}.md")
+                S3.deleteObject(bucketName, post.file)
+              } else {
+                S3.putObject(bucketName, s"${postData.path}.md", postData.md)
+                S3.putObject(bucketName, newFileName, postData.content)
               }
 
-              "ok"
+              //              (postData.path != post.path, postData.md) match {
+              //                case (true, Some(md)) =>
+              //                  S3.putObject(bucketName, s"${postData.path}.md", md)
+              //                  S3.putObject(bucketName, newFileName, postData.content.get)
+              //                  S3.deleteObject(bucketName, s"${post.path}.md")
+              //                  S3.deleteObject(bucketName, post.file)
+              //                case (false, Some(md)) =>
+              //                  S3.putObject(bucketName, s"${postData.path}.md", md)
+              //                  S3.putObject(bucketName, newFileName, postData.content.get)
+              //                case (true, None) =>
+              //                  S3.copyObject(bucketName, s"${post.path}.md", s"${postData.path}.md")
+              //                  S3.copyObject(bucketName, post.file, newFileName)
+              //                  S3.deleteObject(bucketName, s"${post.path}.md")
+              //                  S3.deleteObject(bucketName, post.file)
+              //                case (false, None) =>
+              //              }
+
+              success(List("OK"))
             }
           }
         }
